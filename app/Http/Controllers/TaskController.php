@@ -19,7 +19,10 @@ class TaskController extends Controller
     // タスク詳細取得
     public function show(Task $task): JsonResponse
     {
-        return response()->json($task);
+      if ($task->user_id !== Auth::id()) {
+          abort(404);
+      }
+      return response()->json($task);
     }
 
     // タスク作成
@@ -38,6 +41,9 @@ class TaskController extends Controller
     // タスク更新
     public function update(Request $request, Task $task): JsonResponse
     {
+       if ($task->user_id !== Auth::id()) {
+          abort(404);
+      }       
         $validated = $request->validate([
             'is_completed' => 'required|boolean',
         ]);
@@ -50,6 +56,9 @@ class TaskController extends Controller
     // タスク削除
     public function destroy(Task $task): JsonResponse
     {
+      if ($task->user_id !== Auth::id()) {
+          abort(404);
+      }        
         $task->delete();
 
         return response()->json(null, 204);
